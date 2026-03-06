@@ -1,4 +1,4 @@
-# Brand design system for LogisticsNow AI Console
+# Brand design system for FreightLens
 # Fonts: Poppins (headings), Source Sans Pro (body)
 # Primary Green: #51aa3a, White: #ffffff, Dark: #21242b, Light BG: #f2f4f8
 
@@ -94,5 +94,5 @@ BRAND_TAGLINE_HTML = """
 """
 
 BRAND_VALUES_HTML = """
-<p class="ln-footer">LogisticsNow values: <span class="ln-values">Trust</span> · <span class="ln-values">Neutrality</span> · <span class="ln-values">Efficiency</span> · <span class="ln-values">Visibility</span> · <span class="ln-values">Innovation</span></p>
+<p class="ln-footer">FreightLens values: <span class="ln-values">Trust</span> · <span class="ln-values">Neutrality</span> · <span class="ln-values">Efficiency</span> · <span class="ln-values">Visibility</span> · <span class="ln-values">Innovation</span></p>
 """

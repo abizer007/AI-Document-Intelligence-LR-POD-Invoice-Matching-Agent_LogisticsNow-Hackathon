@@ -1,5 +1,5 @@
 """
-LogisticsNow AI Console - Control Tower style views.
+FreightLens - Control Tower style views.
 All analytics use the existing merged dataframe only.
 """
 

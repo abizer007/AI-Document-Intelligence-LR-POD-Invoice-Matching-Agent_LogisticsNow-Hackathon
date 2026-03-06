@@ -1,8 +1,10 @@
-# LogisticsNow Exception Intelligence Console
+# FreightLens Exception Intelligence Console
 
 **AI-Powered LR–POD–Invoice Reconciliation System**
 
 *Building the Digital Backbone of Logistics*
+
+**FreightLens** is the official product name.
 
 ---
 
@@ -26,7 +28,7 @@
 
 ## Overview
 
-The **LogisticsNow Exception Intelligence Console** is a production-style prototype for logistics document analysis. It ingests **LR (Lorry Receipt)**, **POD (Proof of Delivery)**, and **Invoice** datasets, merges them, detects discrepancies, computes risk scores, runs fraud checks, and surfaces operational and financial insights through a Streamlit dashboard.
+The **FreightLens Exception Intelligence Console** is a production-style prototype for logistics document analysis. It ingests **LR (Lorry Receipt)**, **POD (Proof of Delivery)**, and **Invoice** datasets, merges them, detects discrepancies, computes risk scores, runs fraud checks, and surfaces operational and financial insights through a Streamlit dashboard.
 
 **Key capabilities:**
 
@@ -39,7 +41,7 @@ The **LogisticsNow Exception Intelligence Console** is a production-style protot
 - **Operational analytics** (carrier/driver/lane risk, delay trends, POD compliance)
 - **Executive dashboard** and **Control Tower** views (map, alerts, heatmaps, AI copilot)
 
-The system is built for **LogisticsNow**-style use: professional, data-driven, and hackathon-ready.
+The system is built for **FreightLens**: professional, data-driven, and hackathon-ready.
 
 ---
 
@@ -66,7 +68,7 @@ flowchart TB
     subgraph ui [Streamlit UI]
         App[app.py]
         Reports[Reports: Dashboard, Shipment, Ops, Finance, Fraud]
-        ControlTower[Logistics Control Tower: 7 views]
+        ControlTower[FreightLens Control Tower: 7 views]
     end
     LR --> Load
     POD --> Load
@@ -407,10 +409,10 @@ The generator produces realistic patterns: popular routes (e.g. Mumbai–Pune), 
 
 ### Sidebar
 
-- **LogisticsNow Intelligence Console** (title)
+- **FreightLens Intelligence Console** (title)
 - **Reports** (heading)  
   - **View** dropdown: Executive Dashboard, Shipment Risk Analysis, Operational Intelligence, Financial Intelligence, Fraud & Compliance
-- **Logistics Control Tower** (heading)  
+- **FreightLens Control Tower** (heading)  
   - Buttons: Control Tower, Shipment Intelligence, Carrier Analytics, Route Intelligence, Financial Risk, Fraud Detection, AI Logistics Copilot
 
 ### Reports Views
@@ -459,4 +461,4 @@ See the LICENSE file in the repository.
 
 ---
 
-*LogisticsNow Exception Intelligence Console – AI-Powered LR–POD–Invoice Reconciliation.*
+*FreightLens Exception Intelligence Console – AI-Powered LR–POD–Invoice Reconciliation.*

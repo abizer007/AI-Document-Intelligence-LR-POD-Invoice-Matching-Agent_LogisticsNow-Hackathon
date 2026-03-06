@@ -1,1 +1,1 @@
-# LogisticsNow Exception Intelligence Console - UI modules
+# FreightLens Exception Intelligence Console - UI modules

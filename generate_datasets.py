@@ -1,5 +1,5 @@
 """
-Generate realistic LR, POD, and Invoice datasets for LogisticsNow demos.
+Generate realistic LR, POD, and Invoice datasets for FreightLens demos.
 Schema and column names are fixed; only value generation is configurable.
 
 Usage:
@@ -127,7 +127,7 @@ def choose_route() -> tuple:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Generate LR, POD, and Invoice CSVs for LogisticsNow demos.",
+        description="Generate LR, POD, and Invoice CSVs for FreightLens demos.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=__doc__,
     )

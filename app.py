@@ -1,5 +1,5 @@
 # ==========================================================
-# LogisticsNow Exception Intelligence Console
+# FreightLens Exception Intelligence Console
 # AI-powered LR – POD – Invoice Reconciliation System
 # ==========================================================
 
@@ -38,7 +38,7 @@ logger = logging.getLogger(__name__)
 # PAGE CONFIG
 # -----------------------------
 st.set_page_config(
-    page_title="LogisticsNow Intelligence Console",
+    page_title="FreightLens Intelligence Console",
     layout="wide",
 )
 
@@ -51,9 +51,9 @@ st.markdown("""
 .sub-title { font-size:18px; color:gray; }
 </style>
 """, unsafe_allow_html=True)
-st.markdown('<p class="main-title">LogisticsNow Exception Intelligence Console</p>', unsafe_allow_html=True)
+st.markdown('<p class="main-title">FreightLens Exception Intelligence Console</p>', unsafe_allow_html=True)
 st.markdown('<p class="sub-title">AI Powered LR–POD–Invoice Reconciliation System</p>', unsafe_allow_html=True)
-# Brand design system and tagline (LogisticsNow AI Console)
+# Brand design system and tagline (FreightLens)
 st.markdown(BRAND_CSS, unsafe_allow_html=True)
 st.markdown(BRAND_TAGLINE_HTML, unsafe_allow_html=True)
 st.divider()
@@ -129,16 +129,16 @@ if lr_file and pod_file and invoice_file:
     if merged is None or merged.empty:
         st.warning("Pipeline produced no data. Check file formats.")
     else:
-        # Top navigation (Logistics Control Tower) - session state
+        # Top navigation (FreightLens Control Tower) - session state
         if "show_top_nav_content" not in st.session_state:
             st.session_state.show_top_nav_content = True
         if "top_nav_page" not in st.session_state:
-            st.session_state.top_nav_page = "Control Tower"
+            st.session_state.top_nav_page = "Overview"
         if "prev_sidebar_page" not in st.session_state:
             st.session_state.prev_sidebar_page = None
 
         TOP_NAV_PAGES = [
-            "Control Tower",
+            "Overview",
             "Shipment Intelligence",
             "Carrier Analytics",
             "Route Intelligence",
@@ -147,7 +147,7 @@ if lr_file and pod_file and invoice_file:
             "AI Logistics Copilot",
         ]
         # Sidebar: Reports on top, then Control Tower buttons
-        st.sidebar.markdown("**LogisticsNow Intelligence Console**")
+        st.sidebar.markdown("**FreightLens Intelligence Console**")
         st.sidebar.markdown("---")
         st.sidebar.markdown('<p class="ln-sidebar-heading">Reports</p>', unsafe_allow_html=True)
         page = st.sidebar.selectbox(
@@ -162,7 +162,7 @@ if lr_file and pod_file and invoice_file:
             key="sidebar_reports",
         )
         st.sidebar.markdown("---")
-        st.sidebar.markdown('<p class="ln-sidebar-heading ln-sidebar-spaced">Logistics Control Tower</p>', unsafe_allow_html=True)
+        st.sidebar.markdown('<p class="ln-sidebar-heading ln-sidebar-spaced">FreightLens Control Tower</p>', unsafe_allow_html=True)
         for i, name in enumerate(TOP_NAV_PAGES):
             if st.sidebar.button(name, key=f"top_nav_{i}"):
                 st.session_state.show_top_nav_content = True
@@ -174,7 +174,7 @@ if lr_file and pod_file and invoice_file:
 
         if st.session_state.show_top_nav_content:
             p = st.session_state.top_nav_page
-            if p == "Control Tower":
+            if p == "Overview":
                 control_tower_views.render_control_tower(merged, context)
             elif p == "Shipment Intelligence":
                 control_tower_views.render_shipment_intelligence(merged, context)
