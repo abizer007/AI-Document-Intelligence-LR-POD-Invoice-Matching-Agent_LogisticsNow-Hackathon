@@ -12,7 +12,7 @@
 
 - **Abizer Masavi**
 - **Megha Gala**
-- **Nischay Mishra**
+- **Nishchay Mishra**
 - **Suranjan Suryawanshi**
 
 ---
