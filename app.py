@@ -51,9 +51,11 @@ except ModuleNotFoundError:
 # -----------------------------
 # PAGE CONFIG (must be first Streamlit command)
 # -----------------------------
+_favicon_path = _ROOT / "logo-Photoroom.png"
+_page_icon = str(_favicon_path) if _favicon_path.exists() else "📊"
 st.set_page_config(
     page_title="FreightLens Dashboard",
-    page_icon="assets/icon_logo.png",
+    page_icon=_page_icon,
     layout="wide",
 )
 
