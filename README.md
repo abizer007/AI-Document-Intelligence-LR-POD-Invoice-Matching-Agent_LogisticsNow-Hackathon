@@ -1,10 +1,19 @@
-# FreightLens Exception Intelligence Console
+# FreightLens Intelligence Console
 
 **AI-Powered LR–POD–Invoice Reconciliation System**
 
 *Building the Digital Backbone of Logistics*
 
 **FreightLens** is the official product name.
+
+---
+
+## Team Members
+
+- **Abizer Masavi**
+- **Megha Gala**
+- **Nischay Mishra**
+- **Suranjan Suryawanshi**
 
 ---
 
@@ -20,6 +29,7 @@
 - [Data Schema](#data-schema)
 - [Pipeline & Modules](#pipeline--modules)
 - [UI & Navigation](#ui--navigation)
+- [Intelligence Report (PDF)](#intelligence-report-pdf)
 - [Brand & Theming](#brand--theming)
 - [Configuration](#configuration)
 - [License](#license)
@@ -28,7 +38,7 @@
 
 ## Overview
 
-The **FreightLens Exception Intelligence Console** is a production-style prototype for logistics document analysis. It ingests **LR (Lorry Receipt)**, **POD (Proof of Delivery)**, and **Invoice** datasets, merges them, detects discrepancies, computes risk scores, runs fraud checks, and surfaces operational and financial insights through a Streamlit dashboard.
+The **FreightLens Intelligence Console** is a production-style prototype for logistics document analysis. It ingests **LR (Lorry Receipt)**, **POD (Proof of Delivery)**, and **Invoice** datasets, merges them, detects discrepancies, computes risk scores, runs fraud checks, and surfaces operational and financial insights through a Streamlit dashboard.
 
 **Key capabilities:**
 
@@ -39,7 +49,8 @@ The **FreightLens Exception Intelligence Console** is a production-style prototy
 - **Four-level risk classification** (Low, Medium, High, Critical)
 - **Fraud detection** (duplicate invoices, repeated driver/carrier anomalies, cost inflation, repeated missing PODs)
 - **Operational analytics** (carrier/driver/lane risk, delay trends, POD compliance)
-- **Executive dashboard** and **Control Tower** views (map, alerts, heatmaps, AI copilot)
+- **Executive dashboard** and **FreightLens Control Tower** views (Overview, Shipment Intelligence, Carrier Analytics, Route Intelligence, Financial Risk, Fraud Detection, AI Logistics Copilot)
+- **Enterprise Intelligence Report** – generate a full multi-section PDF report (executive summary, shipment/carrier/route/financial/fraud analytics, AI insights) with one click and download
 
 The system is built for **FreightLens**: professional, data-driven, and hackathon-ready.
 
@@ -68,7 +79,7 @@ flowchart TB
     subgraph ui [Streamlit UI]
         App[app.py]
         Reports[Reports: Dashboard, Shipment, Ops, Finance, Fraud]
-        ControlTower[FreightLens Control Tower: 7 views]
+        ControlTower[Control Tower: Overview, Shipment, Carrier, Route, Finance, Fraud, AI Copilot, Report]
     end
     LR --> Load
     POD --> Load
@@ -107,7 +118,12 @@ flowchart LR
         Fin[finance]
         FraudUI[fraud]
         ControlTower[control_tower_views]
+        ReportPanel[report_panel]
         Brand[brand_css]
+    end
+    subgraph components [components/]
+        Sidebar[sidebar]
+        Nav[navigation]
     end
     App --> Loader
     App --> Valid
@@ -122,7 +138,10 @@ flowchart LR
     App --> Fin
     App --> FraudUI
     App --> ControlTower
+    App --> ReportPanel
     App --> Brand
+    App --> Sidebar
+    App --> Nav
     Recon --> Risk
     Risk --> Insights
     FraudMod --> FraudUI
@@ -171,13 +190,25 @@ sequenceDiagram
 
 ```
 .
-├── app.py                    # Streamlit entry; upload, pipeline, navigation
+├── app.py                    # Streamlit entry; upload, pipeline, sidebar + navigation
 ├── generate_datasets.py      # CLI to generate LR, POD, Invoice CSVs
 ├── requirements.txt          # Python dependencies
+├── logo-Photoroom.png        # FreightLens logo (sidebar)
 ├── run_app.bat               # Windows batch script to run app
 ├── run_app.ps1               # PowerShell script to run app
 ├── README.md                 # This file
 ├── .gitignore
+│
+├── .streamlit/
+│   └── config.toml           # Theme (primary green, background, font)
+│
+├── components/               # Sidebar and navigation
+│   ├── __init__.py
+│   ├── navigation.py         # Nav items, session-state keys, page name mapping
+│   └── sidebar.py            # Logo, Reports dropdown, Control Tower nav buttons
+│
+├── styles/
+│   └── sidebar.css           # Sidebar layout, logo, buttons, section labels
 │
 ├── modules/                  # Backend logic
 │   ├── __init__.py
@@ -187,17 +218,19 @@ sequenceDiagram
 │   ├── reconciliation_engine.py  # merge_documents(), detect_discrepancies()
 │   ├── risk_engine.py        # Weighted risk score, 4 levels, recommendations, investigation
 │   ├── fraud_detection.py    # Duplicate/repeated/suspicious detection
-│   └── insights_engine.py   # Carrier/driver/lane risk, heatmap, delay, POD compliance
+│   ├── insights_engine.py   # Carrier/driver/lane risk, heatmap, delay, POD compliance
+│   └── report_generator.py  # PDF intelligence report (ReportLab + Matplotlib)
 │
 └── ui/                       # Streamlit UI
     ├── __init__.py
-    ├── brand_css.py          # Brand CSS, tagline, sidebar styles, table styles
+    ├── brand_css.py          # Brand CSS, tagline, main-area styles
     ├── dashboard.py          # Executive Dashboard (metrics + charts)
     ├── shipment_analysis.py  # Shipment Risk Analysis (table, drill-down)
     ├── operations.py        # Operational Intelligence (carrier, driver, lane, delay, POD)
     ├── finance.py            # Financial Intelligence (exposure, heatmap, charges)
     ├── fraud.py              # Fraud & Compliance (flagged shipments)
-    └── control_tower_views.py # Control Tower: 7 views (map, alerts, carrier, route, finance, fraud, copilot)
+    ├── control_tower_views.py # Control Tower: Overview, Shipment, Carrier, Route, Finance, Fraud, AI Copilot
+    └── report_panel.py       # Generate Intelligence Report panel (progress + PDF download)
 ```
 
 ---
@@ -209,7 +242,8 @@ sequenceDiagram
 | Frontend    | Streamlit |
 | Backend     | Python 3.x |
 | Data        | pandas, numpy |
-| Charts      | Plotly (plotly.express) |
+| Charts      | Plotly (plotly.express), Matplotlib (PDF report) |
+| PDF Report  | ReportLab, Matplotlib |
 | Fonts       | Google Fonts (Poppins, Source Sans Pro) |
 | Logging     | Python `logging` |
 | Caching     | `@st.cache_data` for pipeline |
@@ -241,7 +275,7 @@ sequenceDiagram
    pip install -r requirements.txt
    ```
 
-   Core dependencies: `streamlit`, `pandas`, `numpy`, `plotly`.
+   Core dependencies: `streamlit`, `pandas`, `numpy`, `plotly`, `reportlab`, `matplotlib`.
 
 ---
 
@@ -409,11 +443,13 @@ The generator produces realistic patterns: popular routes (e.g. Mumbai–Pune), 
 
 ### Sidebar
 
-- **FreightLens Intelligence Console** (title)
+- **FreightLens logo** (static, top center; compact)
 - **Reports** (heading)  
   - **View** dropdown: Executive Dashboard, Shipment Risk Analysis, Operational Intelligence, Financial Intelligence, Fraud & Compliance
-- **FreightLens Control Tower** (heading)  
-  - Buttons: Control Tower, Shipment Intelligence, Carrier Analytics, Route Intelligence, Financial Risk, Fraud Detection, AI Logistics Copilot
+- **Navigation** (heading)  
+  - Buttons: Overview, Shipment Intelligence, Carrier Analytics, Route Intelligence, Financial Risk, Fraud Detection, AI Logistics Copilot, **Generate Intelligence Report**
+
+Sidebar theme: white background, light green/soft grey nav buttons, green active state; styling in `styles/sidebar.css` and `.streamlit/config.toml`.
 
 ### Reports Views
 
@@ -438,16 +474,17 @@ The generator produces realistic patterns: popular routes (e.g. Mumbai–Pune), 
 ## Brand & Theming
 
 - **Fonts:** Poppins (headings), Source Sans Pro (body) via Google Fonts.
-- **Colors:** Primary green `#51aa3a`, white `#ffffff`, dark `#21242b`, light `#f2f4f8`.
+- **Theme (`.streamlit/config.toml`):** Primary green `#2E7D32`, background `#F5F7F6`, secondary `#FFFFFF`, text `#1F2937`, sans serif.
 - **Tagline:** “Building the Digital Backbone of Logistics.”
 - **Values:** Trust, Neutrality, Efficiency, Visibility, Innovation (footer).
-- **Sidebar:** Green section headings; dark buttons with green border/hover.
-- **Tables:** Alternating row colors, bold dark header, row hover, responsive container (CSS in `brand_css.py`).
+- **Sidebar:** White background; compact logo at top; Reports then Navigation; light green nav buttons, green active state; styles in `styles/sidebar.css`.
+- **Tables:** Alternating row colors, bold header, row hover (CSS in `brand_css.py` and report PDF in `report_generator.py`).
 
 ---
 
 ## Configuration
 
+- **Theme:** `.streamlit/config.toml` – primaryColor, backgroundColor, secondaryBackgroundColor, textColor, font.
 - **Logging:** Configured in `app.py` (level INFO, console).
 - **Cache:** Pipeline cached with `@st.cache_data(ttl=3600)`; key from upload file bytes hash.
 - **Risk thresholds:** In `risk_engine.py` (e.g. THRESHOLD_MEDIUM=25, THRESHOLD_HIGH=60, THRESHOLD_CRITICAL=120).
@@ -461,4 +498,4 @@ See the LICENSE file in the repository.
 
 ---
 
-*FreightLens Exception Intelligence Console – AI-Powered LR–POD–Invoice Reconciliation.*
+*FreightLens Intelligence Console – AI-Powered LR–POD–Invoice Reconciliation.*
