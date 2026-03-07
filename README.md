@@ -215,6 +215,9 @@ sequenceDiagram
 ├── freightlens-logo.png      # FreightLens logo (sidebar, PDF report)
 ├── assets/
 │   └── web_banner.png        # Responsive top banner image
+├── example_summary/          # Sample Intelligence Report (PDF) for reference/demos
+│   ├── README.md
+│   └── freightlens_intelligence_report_example.pdf
 ├── run_app.bat               # Windows batch script to run app
 ├── run_app.ps1               # PowerShell script to run app
 ├── README.md                 # This file
