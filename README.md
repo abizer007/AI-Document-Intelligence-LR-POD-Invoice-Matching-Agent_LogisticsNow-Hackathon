@@ -33,6 +33,7 @@
 - [Intelligence Report (PDF)](#intelligence-report-pdf)
 - [Brand & Theming](#brand--theming)
 - [Configuration](#configuration)
+- [Future Implications & Best Upgrade](#future-implications--best-upgrade)
 - [License](#license)
 
 ---
@@ -513,6 +514,50 @@ Sidebar theme: white background, light green/soft grey nav buttons, green active
 - **Cache:** Pipeline cached with `@st.cache_data(ttl=3600)`; key from upload file bytes hash.
 - **Risk thresholds:** In `risk_engine.py` (e.g. THRESHOLD_MEDIUM=25, THRESHOLD_HIGH=60, THRESHOLD_CRITICAL=120).
 - **Validation bounds:** In `validators.py` (e.g. INVOICE_DIFF_CAP, DELAY_DAYS_MAX).
+
+---
+
+## Future Implications & Best Upgrade
+
+A **high-impact, judge-impressive** evolution of FreightLens is to turn it into a **plug-and-play logistics AI system** by adding a **Dataset Mapper UI** in Streamlit. Today the app expects fixed column names (e.g. `Shipment_ID`, `Weight_KG`, `Package_Count`). Many real-world LR, POD, or Invoice files use different headers (`shipment_id`, `weight`, `packages`, `consignment_no`, etc.). A mapper removes that friction.
+
+### Dataset Mapper UI – Concept
+
+**Flow:**
+
+1. **Upload dataset** – User uploads their LR, POD, or Invoice CSV as usual.
+2. **Select column mapping** – A dedicated UI step shows:
+   - **Your column** (dropdown or list of detected CSV columns)
+   - **→ FreightLens column** (dropdown of canonical names the pipeline expects)
+   - One row per mapping; optional “auto-detect” by name similarity.
+3. **Apply and run** – Columns are renamed internally to the canonical schema; the existing pipeline (reconciliation, risk, fraud, insights, report) runs unchanged.
+
+**Example mapping:**
+
+| Your column   | → | FreightLens column |
+|--------------|---|---------------------|
+| `shipment_id`| → | `Shipment_ID`       |
+| `weight`     | → | `Weight_KG`         |
+| `packages`   | → | `Package_Count`     |
+| `carrier`    | → | `Transport_Company` |
+| `inv_amt`    | → | `Total_Invoice_Amount` |
+
+### Why this is the “best upgrade”
+
+- **Plug-and-play** – Any CSV that can be mapped to the FreightLens schema works without changing the file. No need to pre-rename columns in Excel or scripts.
+- **Judge-ready** – Demonstrates product thinking: same AI pipeline, flexible ingestion. Easy to demo with different column names and show “your data, our schema.”
+- **Reusable** – Mapping can be saved (e.g. per client or template) and reused, reducing setup time for repeat users.
+- **Non-invasive** – Renaming happens at load time; all existing modules (validators, risk engine, fraud, report generator) stay as-is.
+
+### Implementation outline
+
+- Add a **Mapper** step after file upload (e.g. per file type: LR / POD / Invoice).
+- For each upload, infer initial mappings by matching header strings to canonical names (fuzzy or exact).
+- Render Streamlit widgets: `st.selectbox` or multiselect for “Your column” → “FreightLens column”; allow adding/removing rows.
+- Before calling `data_loader` / validators, apply the chosen mapping (rename columns), then pass the DataFrame into the existing pipeline.
+- Optional: persist mappings in session state or a small config (e.g. JSON) for “Load saved mapping.”
+
+This positions FreightLens as a **flexible, enterprise-ready logistics intelligence platform** rather than a fixed-schema demo—a strong differentiator for judges and future adoption.
 
 ---
 
