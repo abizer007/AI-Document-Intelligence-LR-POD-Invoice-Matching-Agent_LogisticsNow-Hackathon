@@ -81,6 +81,16 @@ This section summarizes the complete FreightLens feature set in one place.
 
 ## Architecture
 
+### System overview
+
+End-to-end flow from raw LR, POD, and Invoice inputs through matching, weighted risk scoring, and the control tower UI:
+
+![FreightLens Architectural Diagram](assets/freightlens_architectural_diagram.png)
+
+*Data sources (LR, POD, Invoice CSVs) → Three-way deterministic matching → Weighted risk scoring (e.g. missing POD ×30, missing signature ×20, quantity diff ×5) → Neural risk / fraud detection → Logistics Control Tower with real-time dashboards and business-readable anomaly explanations.*
+
+---
+
 ### High-Level Data Flow
 
 ```mermaid
@@ -218,6 +228,7 @@ sequenceDiagram
 ├── requirements.txt          # Python dependencies
 ├── freightlens-logo.png      # FreightLens logo (sidebar, PDF report)
 ├── assets/
+│   ├── freightlens_architectural_diagram.png   # Architecture diagram (README)
 │   └── web_banner.png        # Responsive top banner image
 ├── example_summary/          # Sample Intelligence Report (PDF) for reference/demos
 │   ├── README.md
