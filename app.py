@@ -3,6 +3,14 @@
 # AI-powered LR – POD – Invoice Reconciliation System
 # ==========================================================
 
+import sys
+from pathlib import Path
+
+# Ensure project root is on path so 'components', 'modules', 'ui' resolve
+_ROOT = Path(__file__).resolve().parent
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
+
 import hashlib
 import logging
 from io import BytesIO
@@ -23,7 +31,39 @@ from ui import fraud
 from ui import operations
 from ui import shipment_analysis
 from ui import control_tower_views
+from ui import report_panel
 from ui.brand_css import BRAND_CSS, BRAND_TAGLINE_HTML
+try:
+    from components.sidebar import get_show_control_tower_content, render_sidebar
+except ModuleNotFoundError:
+    # Fallback: load sidebar directly from file path.
+    import importlib.util
+
+    _sidebar_path = _ROOT / "components" / "sidebar.py"
+    _spec = importlib.util.spec_from_file_location("sidebar_fallback", _sidebar_path)
+    if _spec is None or _spec.loader is None:
+        raise
+    _module = importlib.util.module_from_spec(_spec)
+    _spec.loader.exec_module(_module)
+    get_show_control_tower_content = _module.get_show_control_tower_content
+    render_sidebar = _module.render_sidebar
+
+# -----------------------------
+# PAGE CONFIG (must be first Streamlit command)
+# -----------------------------
+st.set_page_config(
+    page_title="FreightLens Dashboard",
+    page_icon="assets/icon_logo.png",
+    layout="wide",
+)
+
+# Inject sidebar styles early so sidebar theme applies before data is loaded
+_sidebar_css_path = Path(__file__).resolve().parent / "styles" / "sidebar.css"
+if _sidebar_css_path.exists():
+    st.markdown(
+        f"<style>\n{_sidebar_css_path.read_text(encoding='utf-8')}\n</style>",
+        unsafe_allow_html=True,
+    )
 
 # -----------------------------
 # LOGGING
@@ -35,23 +75,15 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # -----------------------------
-# PAGE CONFIG
-# -----------------------------
-st.set_page_config(
-    page_title="FreightLens Intelligence Console",
-    layout="wide",
-)
-
-# -----------------------------
 # HEADER
 # -----------------------------
 st.markdown("""
 <style>
 .main-title { font-size:38px; font-weight:bold; color:#2E7D32; }
-.sub-title { font-size:18px; color:gray; }
+.sub-title { font-size:18px; color:#1F2937; }
 </style>
 """, unsafe_allow_html=True)
-st.markdown('<p class="main-title">FreightLens Exception Intelligence Console</p>', unsafe_allow_html=True)
+st.markdown('<p class="main-title">FreightLens Intelligence Console</p>', unsafe_allow_html=True)
 st.markdown('<p class="sub-title">AI Powered LR–POD–Invoice Reconciliation System</p>', unsafe_allow_html=True)
 # Brand design system and tagline (FreightLens)
 st.markdown(BRAND_CSS, unsafe_allow_html=True)
@@ -114,6 +146,19 @@ def _load_and_pipeline(cache_key: str, lr_bytes: bytes, pod_bytes: bytes, inv_by
 
 
 # -----------------------------
+# SIDEBAR (always render for consistent modern SaaS look)
+# -----------------------------
+REPORTS_OPTIONS = [
+    "Executive Dashboard",
+    "Shipment Risk Analysis",
+    "Operational Intelligence",
+    "Financial Intelligence",
+    "Fraud & Compliance",
+]
+page, nav_page = render_sidebar(reports_options=REPORTS_OPTIONS)
+show_control_tower = get_show_control_tower_content()
+
+# -----------------------------
 # PROCESS AND NAVIGATION
 # -----------------------------
 if lr_file and pod_file and invoice_file:
@@ -129,51 +174,8 @@ if lr_file and pod_file and invoice_file:
     if merged is None or merged.empty:
         st.warning("Pipeline produced no data. Check file formats.")
     else:
-        # Top navigation (FreightLens Control Tower) - session state
-        if "show_top_nav_content" not in st.session_state:
-            st.session_state.show_top_nav_content = True
-        if "top_nav_page" not in st.session_state:
-            st.session_state.top_nav_page = "Overview"
-        if "prev_sidebar_page" not in st.session_state:
-            st.session_state.prev_sidebar_page = None
-
-        TOP_NAV_PAGES = [
-            "Overview",
-            "Shipment Intelligence",
-            "Carrier Analytics",
-            "Route Intelligence",
-            "Financial Risk",
-            "Fraud Detection",
-            "AI Logistics Copilot",
-        ]
-        # Sidebar: Reports on top, then Control Tower buttons
-        st.sidebar.markdown("**FreightLens Intelligence Console**")
-        st.sidebar.markdown("---")
-        st.sidebar.markdown('<p class="ln-sidebar-heading">Reports</p>', unsafe_allow_html=True)
-        page = st.sidebar.selectbox(
-            "View",
-            [
-                "Executive Dashboard",
-                "Shipment Risk Analysis",
-                "Operational Intelligence",
-                "Financial Intelligence",
-                "Fraud & Compliance",
-            ],
-            key="sidebar_reports",
-        )
-        st.sidebar.markdown("---")
-        st.sidebar.markdown('<p class="ln-sidebar-heading ln-sidebar-spaced">FreightLens Control Tower</p>', unsafe_allow_html=True)
-        for i, name in enumerate(TOP_NAV_PAGES):
-            if st.sidebar.button(name, key=f"top_nav_{i}"):
-                st.session_state.show_top_nav_content = True
-                st.session_state.top_nav_page = name
-                st.rerun()
-        if page != st.session_state.prev_sidebar_page:
-            st.session_state.show_top_nav_content = False
-            st.session_state.prev_sidebar_page = page
-
-        if st.session_state.show_top_nav_content:
-            p = st.session_state.top_nav_page
+        if show_control_tower:
+            p = nav_page
             if p == "Overview":
                 control_tower_views.render_control_tower(merged, context)
             elif p == "Shipment Intelligence":
@@ -188,26 +190,29 @@ if lr_file and pod_file and invoice_file:
                 control_tower_views.render_fraud_pattern_analysis(merged, context)
             elif p == "AI Logistics Copilot":
                 control_tower_views.render_ai_copilot(merged, context)
-        elif page == "Executive Dashboard":
-            dashboard.render(
-                merged,
-                insights_summary=context.get("insights_summary"),
-                carrier_risk=context.get("carrier_risk"),
-                delay_trends=context.get("delay_trends"),
-            )
-        elif page == "Shipment Risk Analysis":
-            shipment_analysis.render(merged)
-        elif page == "Operational Intelligence":
-            operations.render(
-                merged,
-                carrier_risk=context.get("carrier_risk"),
-                driver_risk=context.get("driver_risk"),
-                lane_risk=context.get("lane_risk"),
-                delay_trends=context.get("delay_trends"),
-            )
-        elif page == "Financial Intelligence":
-            finance.render(merged, heatmap_data=context.get("heatmap_data"))
-        elif page == "Fraud & Compliance":
-            fraud.render(merged, fraud_flags=fraud_flags)
+            elif p == "Generate Intelligence Report":
+                report_panel.render_report_panel(merged, context, fraud_flags)
+        else:
+            if page == "Executive Dashboard":
+                dashboard.render(
+                    merged,
+                    insights_summary=context.get("insights_summary"),
+                    carrier_risk=context.get("carrier_risk"),
+                    delay_trends=context.get("delay_trends"),
+                )
+            elif page == "Shipment Risk Analysis":
+                shipment_analysis.render(merged)
+            elif page == "Operational Intelligence":
+                operations.render(
+                    merged,
+                    carrier_risk=context.get("carrier_risk"),
+                    driver_risk=context.get("driver_risk"),
+                    lane_risk=context.get("lane_risk"),
+                    delay_trends=context.get("delay_trends"),
+                )
+            elif page == "Financial Intelligence":
+                finance.render(merged, heatmap_data=context.get("heatmap_data"))
+            elif page == "Fraud & Compliance":
+                fraud.render(merged, fraud_flags=fraud_flags)
 else:
     st.info("Upload LR, POD and Invoice datasets to begin reconciliation.")

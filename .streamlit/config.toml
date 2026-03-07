@@ -1,0 +1,11 @@
+# FreightLens Control Tower – theme (modern SaaS logistics dashboard)
+# Primary: #2E7D32 | Light Green: #A5D6A7 | Accent: #4CAF50
+# Background: #F5F7F6 | Sidebar: #FFFFFF | Text: #1F2937
+# See: https://docs.streamlit.io/develop/concepts/configuration/theming
+
+[theme]
+primaryColor = "#2E7D32"
+backgroundColor = "#F5F7F6"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#1F2937"
+font = "sans serif"

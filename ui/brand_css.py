@@ -47,39 +47,7 @@ BRAND_CSS = """
   box-shadow: 0 0 0 1px rgba(81,170,58,0.4);
 }
 
-/* Sidebar: section headings (Reports, Control Tower Views) - same font, bigger, green */
-[data-testid="stSidebar"] .ln-sidebar-heading {
-  font-family: 'Poppins', sans-serif;
-  font-weight: 700;
-  font-size: 17px;
-  color: #51aa3a;
-  letter-spacing: 0.3px;
-  margin-bottom: 0;
-}
-[data-testid="stSidebar"] .ln-sidebar-spaced {
-  margin-bottom: 14px;
-}
-[data-testid="stSidebar"] .stButton {
-  display: block;
-  margin-bottom: 6px;
-  width: 100%;
-}
-[data-testid="stSidebar"] .stButton > button {
-  width: 100%;
-  font-family: 'Poppins', sans-serif;
-  font-size: 13px;
-  background: #21242b;
-  color: #f2f4f8;
-  border: 1px solid #51aa3a;
-  border-radius: 8px;
-  padding: 8px 14px;
-  white-space: nowrap;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-[data-testid="stSidebar"] .stButton > button:hover {
-  background: #51aa3a;
-  color: #ffffff;
-}
+/* Sidebar styling is in styles/sidebar.css (Control Tower theme) */
 
 .ln-alert-warning { border-left: 4px solid #ef6c00; }
 .ln-alert-error { border-left: 4px solid #c62828; }
